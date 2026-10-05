@@ -3,7 +3,7 @@
 ## 📖 Project Purpose
 This repository represents the final implementation of the Engineering Challenge. It features a complete Node.js REST API with automated CI/CD pipelines, Docker containerization, and Infrastructure as Code (IaC) validation using Terraform.
 
-## 🏗️ Architecture
+## Architecture
 
 ```mermaid
 graph TD
@@ -17,7 +17,7 @@ graph TD
     end
 ```
 
-## 🚀 Local Setup
+## Local Setup
 
 **Prerequisites:**
 - Node.js (v18+)
@@ -31,7 +31,7 @@ cd Challenge-platform-dev
 npm install
 ```
 
-## 🧪 Tests
+## Tests
 The application is tested using the native `node:test` runner combined with `supertest` for the API endpoints. The test suite covers all features (Tasks CRUD and total calculations).
 
 ```bash
@@ -39,7 +39,7 @@ The application is tested using the native `node:test` runner combined with `sup
 npm test
 ```
 
-## 🐳 Docker Usage
+## Docker Usage
 The application is completely containerized.
 
 ```bash
@@ -50,20 +50,20 @@ docker build -t devops-platform-challenge .
 docker run --rm -p 3000:3000 devops-platform-challenge
 ```
 
-## ⚙️ CI/CD Explanation
+## CI/CD Explanation
 Our CI/CD workflows are orchestrated via GitHub Actions to ensure code quality and deployment readiness:
 - **Node CI (`node-ci.yml`)**: Triggered on all Pull Requests and pushes to `main`. It sets up Node.js, installs dependencies, and runs our automated test suite.
 - **Docker CI (`docker.yml`)**: Responsible for building the Docker image and pushing it to the GitHub Container Registry (GHCR) using a secure token.
 - **Terraform Validation (`terraform.yml`)**: Runs exclusively when `.tf` files are modified, ensuring configuration syntax and formatting without requiring cloud deployment.
 
-## ☁️ Terraform Explanation
+## Terraform Explanation
 The `terraform/` directory contains our Infrastructure as Code foundation.
 Since this challenge requires no active cloud provider, we utilize Terraform strictly for local structural validation. The CI pipeline ensures that the code complies with Terraform's best practices by automatically executing:
 - `terraform fmt -check`
 - `terraform init`
 - `terraform validate`
 
-## 🔄 Development Workflow
+## Development Workflow
 We strictly adhere to a branch-based collaboration model to protect production (`main`):
 
 1. **Create an Issue**: Using the predefined GitHub Issue templates (Bugs/Features).
@@ -73,7 +73,7 @@ We strictly adhere to a branch-based collaboration model to protect production (
 5. **Quality Gates**: A PR cannot be merged until all CI checks pass (Node, Terraform) and at least **1 teammate approval** is granted.
 6. **Merge**: The code is integrated into `main`.
 
-## 🛠️ Useful Commands
+## Useful Commands
 
 | Command | Description |
 |---|---|
