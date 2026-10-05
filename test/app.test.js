@@ -1,6 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { calculateTotal } = require("../src/app");
+const request = require("supertest");
+const { app, calculateTotal } = require("../src/app");
 
 test("calculates the total for several items", () => {
   const items = [
@@ -22,4 +23,20 @@ test("does not mutate the input items", () => {
   calculateTotal(items);
 
   assert.deepEqual(items, copy);
+});
+
+test("GET /tasks returns a list of tasks", async () => {
+  const response = await request(app).get("/tasks");
+  
+  assert.equal(response.status, 200);
+  assert.ok(Array.isArray(response.body), "Response should be an array");
+  
+  // Verify array contents
+  assert.ok(response.body.length > 0, "Tasks array should not be empty");
+  
+  // Check the structure of the first task
+  const task = response.body[0];
+  assert.ok("id" in task, "Task should have an id");
+  assert.ok("title" in task, "Task should have a title");
+  assert.ok("completed" in task, "Task should have a completed status");
 });
