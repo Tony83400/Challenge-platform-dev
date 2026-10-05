@@ -9,6 +9,11 @@ let tasks = [
   { id: 2, title: "Setup Terraform", completed: true }
 ];
 
+// Used by the tests to start from a known state
+function resetTasks(seed = []) {
+  tasks = seed.map((task) => ({ ...task }));
+}
+
 function calculateTotal(items) {
   // INTENTIONAL DEFECT: students must diagnose this using the tests.
   return items.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -38,6 +43,17 @@ app.get("/tasks", (_req, res) => {
   res.json(tasks);
 });
 
+// Delete a task
+app.delete("/tasks/:id", (req, res) => {
+  const index = tasks.findIndex((t) => t.id === Number(req.params.id));
+
+  if (index === -1) {
+    return res.status(404).json({ error: "task not found" });
+  }
+
+  tasks.splice(index, 1);
+  return res.status(204).send();
+});
 
 if (require.main === module) {
   app.listen(port, () => {
@@ -45,4 +61,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, calculateTotal };
+module.exports = { app, calculateTotal, resetTasks };
