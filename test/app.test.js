@@ -40,3 +40,30 @@ test("GET /tasks returns a list of tasks", async () => {
   assert.ok("title" in task, "Task should have a title");
   assert.ok("completed" in task, "Task should have a completed status");
 });
+
+test("POST /tasks creates a new task", async () => {
+  const response = await request(app)
+    .post("/tasks")
+    .send({ title: "Faire le challenge DevOps" });
+
+  assert.equal(response.status, 201);
+  assert.ok("id" in response.body, "The new task should have an id");
+  assert.equal(response.body.title, "Faire le challenge DevOps");
+  assert.equal(response.body.completed, false);
+});
+
+test("POST /tasks returns 400 for empty title", async () => {
+  const response = await request(app)
+    .post("/tasks")
+    .send({ title: "   " });
+
+  assert.equal(response.status, 400);
+});
+
+test("POST /tasks returns 400 for missing title", async () => {
+  const response = await request(app)
+    .post("/tasks")
+    .send({});
+
+  assert.equal(response.status, 400);
+});

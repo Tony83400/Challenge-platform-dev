@@ -1,7 +1,10 @@
 const express = require("express");
+const crypto = require("crypto");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(express.json());
 
 // In-memory tasks database
 let tasks = [
@@ -38,6 +41,22 @@ app.get("/tasks", (_req, res) => {
   res.json(tasks);
 });
 
+app.post("/tasks", (req, res) => {
+  const { title } = req.body;
+
+  if (!title || title.trim() === "") {
+    return res.status(400).json({ error: "Le titre est obligatoire" });
+  }
+
+  const newTask = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    completed: false
+  };
+
+  tasks.push(newTask);
+  res.status(201).json(newTask);
+});
 
 if (require.main === module) {
   app.listen(port, () => {
