@@ -1,13 +1,21 @@
 const express = require("express");
+const crypto = require("crypto");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(express.json());
 
 // In-memory tasks database
 let tasks = [
   { id: 1, title: "Learn GitHub Actions", completed: false },
   { id: 2, title: "Setup Terraform", completed: true }
 ];
+
+// Used by the tests to start from a known state
+function resetTasks(seed = []) {
+  tasks = seed.map((task) => ({ ...task }));
+}
 
 function calculateTotal(items) {
   // INTENTIONAL DEFECT: students must diagnose this using the tests.
@@ -38,6 +46,50 @@ app.get("/tasks", (_req, res) => {
   res.json(tasks);
 });
 
+app.post("/tasks", (req, res) => {
+  const { title } = req.body;
+
+  if (!title || title.trim() === "") {
+    return res.status(400).json({ error: "Le titre est obligatoire" });
+  }
+
+  const newTask = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    completed: false
+  };
+
+  tasks.push(newTask);
+  res.status(201).json(newTask);
+});
+
+app.patch("/tasks/:id", (req, res) => {
+  const taskId = parseInt(req.params.id, 10);
+  const task = tasks.find((t) => t.id === taskId);
+
+  if (!task) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  if (typeof req.body.completed !== "boolean") {
+    return res.status(400).json({ error: "Invalid input: 'completed' must be a boolean" });
+  }
+
+  task.completed = req.body.completed;
+  res.status(200).json(task);
+});
+
+// Delete a task (ids can be numbers or UUID strings, so compare as strings)
+app.delete("/tasks/:id", (req, res) => {
+  const index = tasks.findIndex((t) => String(t.id) === req.params.id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "task not found" });
+  }
+
+  tasks.splice(index, 1);
+  return res.status(204).send();
+});
 
 if (require.main === module) {
   app.listen(port, () => {
@@ -45,4 +97,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, calculateTotal };
+module.exports = { app, calculateTotal, resetTasks };

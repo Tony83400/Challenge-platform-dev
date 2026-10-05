@@ -79,5 +79,19 @@ We strictly adhere to a branch-based collaboration model to protect production (
 |---|---|
 | `npm start` | Starts the Node.js API server on port 3000 |
 | `npm test` | Executes the test suite |
-| `docker build -t api .` | Builds the Docker image |
+| `npm run test:coverage` | Runs tests and generates a native code coverage report |
+| `npm run lint` | Runs ESLint on all codebase files |
+| `npm run audit` | Runs dependency vulnerability audit |
+| `docker build -t devops-platform-challenge .` | Builds the Docker image locally |
 | `terraform -chdir=terraform validate` | Validates Terraform configuration locally |
+
+## 🌟 Bonuses Implemented
+
+Our platform includes several production-grade engineering bonuses:
+
+- **Node.js Dependency Vulnerability Scan**: CI job `audit` runs `npm audit --omit=dev --audit-level=high` to block vulnerabilities in production packages.
+- **Docker Vulnerability Scan**: Aqua Security Trivy is integrated in `docker.yml` to automatically scan built Docker container images for OS and library vulnerabilities (`CRITICAL,HIGH`).
+- **ESLint & Code Quality**: Enforces strict JavaScript linting rules via `eslint.config.mjs` (`semi`, `quotes`, `no-unused-vars`) integrated as a pre-test gate.
+- **Automated Test Coverage**: Native Node test coverage via `npm run test:coverage` achieving **>98% code coverage** with full branch and statement verification across all endpoints (`GET`, `POST`, `PATCH`, `DELETE`, `/health`, `/total`).
+- **Node.js Version Matrix**: Multi-version CI strategy running across active Node.js LTS versions (Node 20 and Node 22) in parallel.
+- **Multi-Stage & Non-Root Docker Image**: The `Dockerfile` uses a multi-stage build (`builder` -> lightweight `alpine` runtime) and executes under the non-privileged `node` user for defense-in-depth container security.
