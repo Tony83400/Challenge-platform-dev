@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+
 // In-memory tasks database
 let tasks = [
   { id: 1, title: "Learn GitHub Actions", completed: false },
@@ -36,6 +38,22 @@ app.get("/total", (_req, res) => {
 
 app.get("/tasks", (_req, res) => {
   res.json(tasks);
+});
+
+app.patch("/tasks/:id", (req, res) => {
+  const taskId = parseInt(req.params.id, 10);
+  const task = tasks.find((t) => t.id === taskId);
+
+  if (!task) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  if (typeof req.body.completed !== "boolean") {
+    return res.status(400).json({ error: "Invalid input: 'completed' must be a boolean" });
+  }
+
+  task.completed = req.body.completed;
+  res.status(200).json(task);
 });
 
 
