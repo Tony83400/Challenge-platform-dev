@@ -1,4 +1,5 @@
 const express = require("express");
+const crypto = require("crypto");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -40,6 +41,22 @@ app.get("/tasks", (_req, res) => {
   res.json(tasks);
 });
 
+app.post("/tasks", (req, res) => {
+  const { title } = req.body;
+
+  if (!title || title.trim() === "") {
+    return res.status(400).json({ error: "Le titre est obligatoire" });
+  }
+
+  const newTask = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    completed: false
+  };
+
+  tasks.push(newTask);
+  res.status(201).json(newTask);
+});
 app.patch("/tasks/:id", (req, res) => {
   const taskId = parseInt(req.params.id, 10);
   const task = tasks.find((t) => t.id === taskId);
