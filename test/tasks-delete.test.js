@@ -31,3 +31,9 @@ test("DELETE /tasks/:id returns 404 for an unknown task", async () => {
   const response = await request(app).delete("/tasks/999");
   assert.equal(response.status, 404);
 });
+
+test("a task created with POST can be deleted", async () => {
+  const created = await request(app).post("/tasks").send({ title: "temporary" });
+  const response = await request(app).delete(`/tasks/${created.body.id}`);
+  assert.equal(response.status, 204);
+});
