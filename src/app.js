@@ -1,7 +1,10 @@
 const express = require("express");
+const crypto = require("crypto");
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.use(express.json());
 
 // In-memory tasks database
 let tasks = [
@@ -54,6 +57,38 @@ app.delete("/tasks/:id", (req, res) => {
   tasks.splice(index, 1);
   return res.status(204).send();
 });
+app.post("/tasks", (req, res) => {
+  const { title } = req.body;
+
+  if (!title || title.trim() === "") {
+    return res.status(400).json({ error: "Le titre est obligatoire" });
+  }
+
+  const newTask = {
+    id: crypto.randomUUID(),
+    title: title.trim(),
+    completed: false
+  };
+
+  tasks.push(newTask);
+  res.status(201).json(newTask);
+});
+app.patch("/tasks/:id", (req, res) => {
+  const taskId = parseInt(req.params.id, 10);
+  const task = tasks.find((t) => t.id === taskId);
+
+  if (!task) {
+    return res.status(404).json({ error: "Task not found" });
+  }
+
+  if (typeof req.body.completed !== "boolean") {
+    return res.status(400).json({ error: "Invalid input: 'completed' must be a boolean" });
+  }
+
+  task.completed = req.body.completed;
+  res.status(200).json(task);
+});
+
 
 if (require.main === module) {
   app.listen(port, () => {
@@ -62,3 +97,4 @@ if (require.main === module) {
 }
 
 module.exports = { app, calculateTotal, resetTasks };
+module.exports = { app, calculateTotal };
