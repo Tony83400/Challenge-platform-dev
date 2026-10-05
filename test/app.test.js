@@ -92,7 +92,3 @@ test("PATCH /tasks/:id returns 400 for invalid input", async () => {
 
   assert.equal(response.status, 400);
 });
-
-test("quality gate demo failure", () => {
-  assert.equal(1, 2);
-});
