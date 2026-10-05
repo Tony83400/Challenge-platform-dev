@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node src/app.js",
     "test": "node --test",
-    "lint": "eslint ."
+    "test:coverage": "node --experimental-test-coverage --test",
+    "lint": "eslint .",
+    "audit": "npm audit --omit=dev --audit-level=high"
   },
   "dependencies": {
     "express": "^4.21.2"
