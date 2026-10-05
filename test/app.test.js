@@ -67,3 +67,29 @@ test("POST /tasks returns 400 for missing title", async () => {
 
   assert.equal(response.status, 400);
 });
+test("PATCH /tasks/:id updates an existing task", async () => {
+  const response = await request(app)
+    .patch("/tasks/1")
+    .send({ completed: true });
+
+  assert.equal(response.status, 200);
+  assert.equal(response.body.id, 1);
+  assert.equal(response.body.completed, true);
+});
+
+test("PATCH /tasks/:id returns 404 for unknown task", async () => {
+  const response = await request(app)
+    .patch("/tasks/999")
+    .send({ completed: true });
+
+  assert.equal(response.status, 404);
+});
+
+test("PATCH /tasks/:id returns 400 for invalid input", async () => {
+  const response = await request(app)
+    .patch("/tasks/1")
+    .send({ completed: "invalid" });
+
+  assert.equal(response.status, 400);
+});
+
