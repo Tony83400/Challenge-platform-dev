@@ -1,18 +1,23 @@
-# …tape 1 : Build
+Ôªø# √âtape 1 : Build
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 
-# …tape 2 : Production
-FROM node:20-alpine
+# √âtape 2 : Production
+FROM node:20-alpine AS production
+ENV NODE_ENV=production
 WORKDIR /app
-# Copie stricte pour rÈduire la taille de l'image (bonus)
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src ./src 
 
+# Copie stricte et installation des d√©pendances de production uniquement
+COPY --chown=node:node package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+# Copie du code source avec les bons droits
+COPY --chown=node:node src/ ./src/
+
+# Ex√©cution en tant qu'utilisateur non-root
 USER node
 EXPOSE 3000
 CMD ["npm", "start"]
