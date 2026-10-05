@@ -92,3 +92,22 @@ test("PATCH /tasks/:id returns 400 for invalid input", async () => {
 
   assert.equal(response.status, 400);
 });
+
+test("GET / returns service status", async () => {
+  const response = await request(app).get("/");
+  assert.equal(response.status, 200);
+  assert.equal(response.body.service, "devops-platform-challenge");
+  assert.equal(response.body.status, "ok");
+});
+
+test("GET /health returns healthy status", async () => {
+  const response = await request(app).get("/health");
+  assert.equal(response.status, 200);
+  assert.equal(response.body.status, "healthy");
+});
+
+test("GET /total returns calculated total", async () => {
+  const response = await request(app).get("/total");
+  assert.equal(response.status, 200);
+  assert.equal(response.body.total, 35);
+});
